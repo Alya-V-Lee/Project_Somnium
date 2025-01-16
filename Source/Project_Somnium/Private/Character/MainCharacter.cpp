@@ -3,8 +3,6 @@
 
 #include "Character/MainCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/ArrowComponent.h"
 
 AMainCharacter::AMainCharacter()
 {
