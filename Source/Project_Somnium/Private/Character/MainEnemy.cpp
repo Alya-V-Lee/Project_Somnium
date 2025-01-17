@@ -3,10 +3,19 @@
 
 #include "Character/MainEnemy.h"
 
+#include "NavigationSystemTypes.h"
+#include "AbilitySystem/MainAbilitySystemComponent.h"
+#include "AbilitySystem/MainAttributeSet.h"
 #include "Project_Somnium/Project_Somnium.h"
 
 AMainEnemy::AMainEnemy()
 {
+	AbilitySystemComponent = CreateDefaultSubobject<UMainAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	AttributeSet = CreateDefaultSubobject<UMainAttributeSet>("AttributeSet");
+	
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	
 	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
@@ -23,4 +32,11 @@ void AMainEnemy::UnHighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
+}
+
+void AMainEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }

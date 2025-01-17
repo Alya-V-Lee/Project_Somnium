@@ -16,8 +16,13 @@ class PROJECT_SOMNIUM_API AMainEnemy : public AMainCharacterBase, public IEnemyI
 	GENERATED_BODY()
 public:
 	AMainEnemy();
-	
+
+	/** Enemy Interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+	/** End Enemy Interface */
+
+protected:
+	virtual void BeginPlay() override;
 
 };

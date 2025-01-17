@@ -23,13 +23,12 @@ public:
 
 	AMainCharacter();
 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
 private:
 
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UCapsuleComponent> Capsule;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UArrowComponent> Arrow;
+	void InitAbilityActorInfor();
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	TObjectPtr<USpringArmComponent> SpringArm;

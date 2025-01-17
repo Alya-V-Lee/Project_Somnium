@@ -2,7 +2,12 @@
 
 
 #include "Character/MainCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "Player/MainPlayerState.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -27,4 +32,30 @@ AMainCharacter::AMainCharacter()
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
+}
+
+void AMainCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// Init ability actor info for the server
+	InitAbilityActorInfor();
+}
+
+void AMainCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	// Init ability actor info for the client
+	InitAbilityActorInfor();
+}
+
+void AMainCharacter::InitAbilityActorInfor()
+{
+	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	MainPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(MainPlayerState, this);
+	AbilitySystemComponent = MainPlayerState->GetAbilitySystemComponent();
+	AttributeSet = MainPlayerState->GetAttributeSet();
 }
