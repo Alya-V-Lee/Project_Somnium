@@ -28,7 +28,7 @@ public:
 
 private:
 
-	void InitAbilityActorInfor();
+	void InitAbilityActorInfo();
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	TObjectPtr<USpringArmComponent> SpringArm;

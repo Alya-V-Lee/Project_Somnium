@@ -39,7 +39,7 @@ void AMainCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	// Init ability actor info for the server
-	InitAbilityActorInfor();
+	InitAbilityActorInfo();
 }
 
 void AMainCharacter::OnRep_PlayerState()
@@ -47,10 +47,10 @@ void AMainCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	// Init ability actor info for the client
-	InitAbilityActorInfor();
+	InitAbilityActorInfo();
 }
 
-void AMainCharacter::InitAbilityActorInfor()
+void AMainCharacter::InitAbilityActorInfo()
 {
 	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
 	check (MainPlayerState);
