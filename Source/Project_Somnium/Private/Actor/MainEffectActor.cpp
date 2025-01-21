@@ -15,10 +15,10 @@ AMainEffectActor::AMainEffectActor()
 	PrimaryActorTick.bCanEverTick = false;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
+	SetRootComponent(Mesh);
 	
 	Sphere = CreateDefaultSubobject<USphereComponent>(FName("Sphere"));
-	Sphere->SetupAttachment(RootComponent);
+	Sphere->SetupAttachment(GetRootComponent());
 	
 }
 
