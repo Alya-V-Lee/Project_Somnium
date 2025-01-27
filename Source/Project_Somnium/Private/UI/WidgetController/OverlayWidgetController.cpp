@@ -14,7 +14,6 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnMaxHealthChanged.Broadcast(MainAttributeSet->GetMaxHealth());
 	OnManaChanged.Broadcast(MainAttributeSet->GetMana());
 	OnMaxManaChanged.Broadcast(MainAttributeSet->GetMaxMana());
-
 	
 }
 

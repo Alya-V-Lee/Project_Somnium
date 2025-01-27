@@ -31,7 +31,7 @@ void AMainHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 	UOverlayWidgetController* LocalOverlayWidgetController = GetOverlayWidgetController(WidgetControllerParams);
 
 	OverlayWidget->SetWidgetController(LocalOverlayWidgetController);
-	LocalOverlayWidgetController->BroadcastInitialValues();
+	LocalOverlayWidgetController->BroadcastInitialValues(); 
 	
 	Widget->AddToViewport();
 }
