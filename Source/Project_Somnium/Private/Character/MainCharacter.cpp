@@ -4,6 +4,7 @@
 #include "Character/MainCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/MainAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -55,10 +56,13 @@ void AMainCharacter::OnRep_PlayerState()
 
 void AMainCharacter::InitAbilityActorInfo()
 {
+	//Super::InitAbilityActorInfo();
+	
 	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
 	check (MainPlayerState);
 
 	MainPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(MainPlayerState, this);
+	Cast<UMainAbilitySystemComponent>(MainPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = MainPlayerState->GetAbilitySystemComponent();
 	AttributeSet = MainPlayerState->GetAttributeSet();
 

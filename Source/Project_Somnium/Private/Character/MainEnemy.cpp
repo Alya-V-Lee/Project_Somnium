@@ -38,5 +38,13 @@ void AMainEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	InitAbilityActorInfo();
+}
+
+void AMainEnemy::InitAbilityActorInfo()
+{
+	//Super::InitAbilityActorInfo();
+
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	Cast<UMainAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 }
