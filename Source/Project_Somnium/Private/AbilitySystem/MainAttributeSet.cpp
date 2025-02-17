@@ -10,8 +10,7 @@
 
 UMainAttributeSet::UMainAttributeSet()
 {
-	InitHealth(50);
-	InitMana(25);
+	
 }
 
 void UMainAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
