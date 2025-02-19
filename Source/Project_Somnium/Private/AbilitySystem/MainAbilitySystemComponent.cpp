@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/MainAbilitySystemComponent.h"
 
+#include "MainGameplayTags.h"
+
 
 void UMainAbilitySystemComponent::AbilityActorInfoSet()
 {
