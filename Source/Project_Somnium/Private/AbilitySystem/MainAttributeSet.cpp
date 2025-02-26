@@ -4,13 +4,21 @@
 #include "AbilitySystem/MainAttributeSet.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AssetTypeCategories.h"
 #include "GameFramework/Character.h"
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
+#include "MainGameplayTags.h"
 
 UMainAttributeSet::UMainAttributeSet()
 {
-	
+	const FMainGameplayTags& GameplayTags = FMainGameplayTags::Get();
+
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Strength, GetStrengthAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Constitution, GetConstitutionAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Intelligence, GetIntelligenceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Resilience, GetResilienceAttribute);
+
 }
 
 void UMainAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
