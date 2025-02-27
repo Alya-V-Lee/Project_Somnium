@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "MovieSceneSequence.h"
+#include "AbilitySystem/MainAbilitySystemComponent.h"
 
 // Sets default values
 AMainCharacterBase::AMainCharacterBase()
@@ -51,4 +52,12 @@ void AMainCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+}
+
+void AMainCharacterBase::AddCharacterAbilities()
+{
+	UMainAbilitySystemComponent* MainASC = CastChecked<UMainAbilitySystemComponent>(AbilitySystemComponent);
+	if (!HasAuthority()) return;
+
+	MainASC->AddCharacterAbilities(StartupAbilities);
 }
