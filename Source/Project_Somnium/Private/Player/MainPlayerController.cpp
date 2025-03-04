@@ -2,13 +2,22 @@
 
 
 #include "Player/MainPlayerController.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AssetTypeCategories.h"
 #include "EnhancedInputSubsystems.h"
+#include "MainGameplayTags.h"
+#include "AbilitySystem/MainAbilitySystemComponent.h"
+#include "AbilitySystem/MainAbilitySystemLibrary.h"
+#include "Components/SplineComponent.h"
 #include "Input/MainInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
 AMainPlayerController::AMainPlayerController()
 {
 	bReplicates = true;
+
+	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 }
 
 void AMainPlayerController::PlayerTick(float DeltaTime)
@@ -80,17 +89,64 @@ void AMainPlayerController::CursorTrace()
 
 void AMainPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+	if (InputTag.MatchesTagExact(FMainGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+    	bAutoRunning = false;	
+	}
+
 }
 
 void AMainPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Blue, *InputTag.ToString());
+	if (GetASC() == nullptr) return;
+	GetASC()->AbilityInputTagReleased(InputTag);
 }
 
 void AMainPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(3, 3.f, FColor::Green, *InputTag.ToString());
+	if (!InputTag.MatchesTagExact(FMainGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+		return;
+	}
+
+	if (bTargeting)
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+	}
+	else
+	{
+		FollowTime += GetWorld()->GetDeltaSeconds();
+
+		FHitResult Hit;
+		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+		{
+			CachedDestination = Hit.ImpactPoint;
+		}
+
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			ControlledPawn->AddMovementInput(WorldDirection);
+		}
+	}
+}
+
+UMainAbilitySystemComponent* AMainPlayerController::GetASC()
+{
+	if (MainAbilitySystemComponent == nullptr)
+	{
+		MainAbilitySystemComponent = Cast<UMainAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::
+			GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return MainAbilitySystemComponent;
 }
 
 void AMainPlayerController::BeginPlay()
