@@ -7,6 +7,9 @@
 #include "AssetTypeCategories.h"
 #include "EnhancedInputSubsystems.h"
 #include "MainGameplayTags.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
+#include "VectorTypes.h"
 #include "AbilitySystem/MainAbilitySystemComponent.h"
 #include "AbilitySystem/MainAbilitySystemLibrary.h"
 #include "Components/SplineComponent.h"
@@ -16,20 +19,38 @@
 AMainPlayerController::AMainPlayerController()
 {
 	bReplicates = true;
-
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 }
 
 void AMainPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
 	CursorTrace();
+
+	AutoRun();
+}
+
+void AMainPlayerController::AutoRun()
+{
+	if (!bAutoRunning) return;
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(
+			ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(
+			LocationOnSpline, ESplineCoordinateSpace::World);
+		ControlledPawn->AddMovementInput(Direction);
+
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
+	}
 }
 
 void AMainPlayerController::CursorTrace()
 {
-	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit) return;
 
@@ -38,51 +59,15 @@ void AMainPlayerController::CursorTrace()
 	
 	Cast<IEnemyInterface>(CursorHit.GetActor());
 
-	/**
-	 * Line trace from cursor. There are several scenarios.
-	 * A. LastActor is null && ThisActor is null.
-	 *		- Do nothing
-	 * B. LastActor is null && ThisActor is valid.
-	 *		- Highlight ThisActor
-	 * C. LastActor is valid && ThisActor is null.
-	 *		- Unhighlight LastActor
-	 * D. LastActor is valid, but ThisActor != LastActor
-	 *		- Unhighlight LastActor, Highlight ThisActor
-	 * E. LastActor is valid, ThisActor is valid, and LastActor = ThisActor
-	 *		- Do nothing
-	 */
-
-	if (LastActor == nullptr)
+	if (LastActor != ThisActor)
 	{
-		if (ThisActor != nullptr)
+		if (LastActor)
 		{
-			// Case B - Highlight ThisActor
-			ThisActor->HighlightActor();
-		}
-		else
-		{
-			// Case A - Do Nothing
-		}
-	}
-	else // LastActor is Valid
-	{
-		if (ThisActor == nullptr)
-		{
-			// Case C
 			LastActor->UnHighlightActor();
 		}
-		else // Both actors are valid
+		if (ThisActor)
 		{
-			if (LastActor != ThisActor)
-			{
-				// Case D
-				LastActor->UnHighlightActor();
-				ThisActor->HighlightActor();
-			}
-			else
-			{
-				// Case E - Do nothing
-			}
+			ThisActor->HighlightActor();
 		}
 	}
 }
@@ -99,8 +84,42 @@ void AMainPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AMainPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if (GetASC() == nullptr) return;
-	GetASC()->AbilityInputTagReleased(InputTag);
+	if (!InputTag.MatchesTagExact(FMainGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagReleased(InputTag);
+		}
+		return;
+	}
+
+	if (bTargeting)
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagReleased(InputTag);
+		}
+	}
+	else
+	{
+		const APawn* ControlledPawn = GetPawn();
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		{
+			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+				this, ControlledPawn->GetActorLocation(), CachedDestination))
+			{
+				Spline->ClearSplinePoints();
+				for (const FVector& PointLoc : NavPath->PathPoints)
+				{
+					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+				}
+				CachedDestination = NavPath->PathPoints.Last();
+				bAutoRunning = true;
+			}
+		}
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
 }
 
 void AMainPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
@@ -124,11 +143,10 @@ void AMainPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 	else
 	{
 		FollowTime += GetWorld()->GetDeltaSeconds();
-
-		FHitResult Hit;
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+		
+		if (CursorHit.bBlockingHit)
 		{
-			CachedDestination = Hit.ImpactPoint;
+			CachedDestination = CursorHit.ImpactPoint;
 		}
 
 		if (APawn* ControlledPawn = GetPawn())
