@@ -12,7 +12,11 @@ void UMainProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	const bool bIsServer = HasAuthority(&ActivationInfo);
+}
+
+void UMainProjectileSpell::SpawnProjectile()
+{
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
 
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
@@ -25,16 +29,14 @@ void UMainProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		// TODO: Set projectile rotation
 
 		AMainProjectile* Projectile = GetWorld()->SpawnActorDeferred<AMainProjectile>(
-        	ProjectileClass,
-        	SpawnTransform,
-        	GetOwningActorFromActorInfo(),
-        	Cast<APawn>(GetOwningActorFromActorInfo()),
-        	ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+			ProjectileClass,
+			SpawnTransform,
+			GetOwningActorFromActorInfo(),
+			Cast<APawn>(GetOwningActorFromActorInfo()),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		//TODO: Give projectile a Gameplay Effect Spec for causing damage
 		
 		Projectile->FinishSpawning(SpawnTransform);
 	}
-
-
 }

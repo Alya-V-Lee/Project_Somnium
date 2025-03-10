@@ -26,6 +26,8 @@ class PROJECT_SOMNIUM_API AMainPlayerController : public APlayerController
 public:
 	AMainPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
+
+	FHitResult GetCursorHit() const {return CursorHit; }
 	
 protected:
 	virtual void BeginPlay() override;
