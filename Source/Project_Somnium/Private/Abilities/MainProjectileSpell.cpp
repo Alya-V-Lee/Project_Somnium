@@ -14,7 +14,7 @@ void UMainProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 }
 
-void UMainProjectileSpell::SpawnProjectile()
+void UMainProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -24,9 +24,12 @@ void UMainProjectileSpell::SpawnProjectile()
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
 
+		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		// Rotation.Pitch = 0.f; Might look better for top-down experience
+		
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
-		// TODO: Set projectile rotation
+		SpawnTransform.SetRotation(Rotation.Quaternion());
 
 		AMainProjectile* Projectile = GetWorld()->SpawnActorDeferred<AMainProjectile>(
 			ProjectileClass,
