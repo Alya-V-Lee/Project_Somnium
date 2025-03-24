@@ -6,7 +6,10 @@
 #include "NavigationSystemTypes.h"
 #include "AbilitySystem/MainAbilitySystemComponent.h"
 #include "AbilitySystem/MainAttributeSet.h"
+#include "Components/Widget.h"
+#include "Components/WidgetComponent.h"
 #include "Project_Somnium/Project_Somnium.h"
+#include "UI/Widget/MainUserWidget.h"
 
 AMainEnemy::AMainEnemy()
 {
@@ -20,6 +23,9 @@ AMainEnemy::AMainEnemy()
 	
 	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
+	HealthBar->SetupAttachment(GetRootComponent());
 }
 
 void AMainEnemy::HighlightActor()
@@ -39,6 +45,30 @@ void AMainEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	InitAbilityActorInfo();
+
+	if (UMainUserWidget* MainUserWidget = Cast<UMainUserWidget>(HealthBar->GetUserWidgetObject()))
+	{
+		MainUserWidget->SetWidgetController(this);
+	}
+
+	if (const UMainAttributeSet* MainAS = CastChecked<UMainAttributeSet>(AttributeSet))
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MainAS->GetHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MainAS->GetMaxHealthAttribute()).AddLambda(
+	[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		OnHealthChanged.Broadcast(MainAS->GetHealth());
+        OnMaxHealthChanged.Broadcast(MainAS->GetMaxHealth());
+	}
+	
 }
 
 void AMainEnemy::InitAbilityActorInfo()
@@ -47,4 +77,6 @@ void AMainEnemy::InitAbilityActorInfo()
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UMainAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+
+	InitializeDefaultAttributes();
 }

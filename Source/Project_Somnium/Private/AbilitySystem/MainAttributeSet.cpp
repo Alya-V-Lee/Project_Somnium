@@ -122,7 +122,6 @@ void UMainAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
-		
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
@@ -137,7 +136,7 @@ void UMainAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) co
 
 void UMainAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMainAttributeSet, Health, OldMaxHealth);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMainAttributeSet, MaxHealth, OldMaxHealth);
 }
 
 void UMainAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
