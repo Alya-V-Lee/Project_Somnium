@@ -5,6 +5,7 @@
 
 #include "NavigationSystemTypes.h"
 #include "AbilitySystem/MainAbilitySystemComponent.h"
+#include "AbilitySystem/MainAbilitySystemLibrary.h"
 #include "AbilitySystem/MainAttributeSet.h"
 #include "Components/Widget.h"
 #include "Components/WidgetComponent.h"
@@ -79,4 +80,11 @@ void AMainEnemy::InitAbilityActorInfo()
 	Cast<UMainAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
 	InitializeDefaultAttributes();
+}
+
+void AMainEnemy::InitializeDefaultAttributes() const
+{
+	//Super::InitializeDefaultAttributes();
+
+	UMainAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
