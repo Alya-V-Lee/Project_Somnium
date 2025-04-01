@@ -12,6 +12,7 @@ class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
 class UAttributeSet;
+class UAnimMontage;
 
 UCLASS(Abstract)
 class PROJECT_SOMNIUM_API AMainCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -25,6 +26,11 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual void Die() override;
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -63,5 +69,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
-	
+
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };

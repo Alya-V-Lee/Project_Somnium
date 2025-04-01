@@ -11,6 +11,8 @@
 #include "Components/WidgetComponent.h"
 #include "Project_Somnium/Project_Somnium.h"
 #include "UI/Widget/MainUserWidget.h"
+#include "MainGameplayTags.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AMainEnemy::AMainEnemy()
 {
@@ -41,11 +43,19 @@ void AMainEnemy::UnHighlightActor()
 	Weapon->SetRenderCustomDepth(false);
 }
 
+void AMainEnemy::Die()
+{
+	Super::Die();
+	SetLifeSpan(LifeSpan);
+}
+
 void AMainEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	InitAbilityActorInfo();
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+	UMainAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	
 
 	if (UMainUserWidget* MainUserWidget = Cast<UMainUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
@@ -66,10 +76,20 @@ void AMainEnemy::BeginPlay()
 				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
+		AbilitySystemComponent->RegisterGameplayTagEvent(FMainGameplayTags::Get().Effects_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this,
+			&AMainEnemy::HitReactTagChanged
+		);
+		
 		OnHealthChanged.Broadcast(MainAS->GetHealth());
         OnMaxHealthChanged.Broadcast(MainAS->GetMaxHealth());
 	}
-	
+}
+
+void AMainEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
 }
 
 void AMainEnemy::InitAbilityActorInfo()
