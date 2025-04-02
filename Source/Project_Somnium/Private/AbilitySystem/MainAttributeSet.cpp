@@ -9,6 +9,8 @@
 #include "Net/UnrealNetwork.h"
 #include "MainGameplayTags.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/MainPlayerController.h"
 
 UMainAttributeSet::UMainAttributeSet()
 {
@@ -112,7 +114,6 @@ void UMainAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallb
 	}
 }
 
-
 void UMainAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
@@ -152,7 +153,19 @@ void UMainAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	            TagContainer.AddTag(FMainGameplayTags::Get().Effects_HitReact);
 	            Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
+			ShowFloatingText(Props, LocalIncomingDamage);
 		}
+	}
+}
+
+void UMainAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+{
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+	    if (AMainPlayerController* PC = Cast<AMainPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+	    {
+    		PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+	    }
 	}
 }
 
