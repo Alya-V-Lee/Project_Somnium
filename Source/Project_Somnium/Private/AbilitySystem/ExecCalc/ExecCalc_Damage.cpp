@@ -4,6 +4,7 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 
 #include "AbilitySystemComponent.h"
+#include "MainAbilityTypes.h"
 #include "MainGameplayTags.h"
 #include "AbilitySystem/MainAbilitySystemLibrary.h"
 #include "AbilitySystem/MainAttributeSet.h"
@@ -98,6 +99,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	const bool bCriticalHit = FMath::RandRange(1, 100) < EffectiveCriticalHitChance;
 	float InitialDamage = Damage;
+
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	UMainAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 	
 	// If Crit, boost the damage
 	if (bCriticalHit)
@@ -112,6 +116,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	TargetBlockChance = FMath::Max<float>(TargetBlockChance, 0.f);
 
 	const bool bBlocked = FMath::RandRange(1, 100) < TargetBlockChance;
+	
+	UMainAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
 	
 	// If Block, halve the damage
 	if (bBlocked)

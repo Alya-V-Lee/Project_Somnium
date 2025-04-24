@@ -8,6 +8,7 @@
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 #include "MainGameplayTags.h"
+#include "AbilitySystem/MainAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/MainPlayerController.h"
@@ -153,12 +154,14 @@ void UMainAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	            TagContainer.AddTag(FMainGameplayTags::Get().Effects_HitReact);
 	            Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
-			ShowFloatingText(Props, LocalIncomingDamage);
+			const bool bBlock = UMainAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+			const bool bCrit = UMainAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			ShowFloatingText(Props, LocalIncomingDamage, bBlock, bCrit);
 		}
 	}
 }
 
-void UMainAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+void UMainAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const
 {
 	if (Props.SourceCharacter != Props.TargetCharacter)
 	{

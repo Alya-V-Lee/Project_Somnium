@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/MainAbilitySystemLibrary.h"
 
+#include "MainAbilityTypes.h"
 #include "Game/MainGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/MainPlayerState.h"
@@ -88,4 +89,39 @@ UCharacterClassInfo* UMainAbilitySystemLibrary::GetCharacterClassInfo(const UObj
 	if (MainGameMode == nullptr) return nullptr;
 
 	return MainGameMode->CharacterClassInfo;
+}
+
+bool UMainAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FMainGameplayEffectContext* MainEffectContext = static_cast<const FMainGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return MainEffectContext->IsBlockedHit();
+	}
+	return false;
+}
+
+bool UMainAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FMainGameplayEffectContext* MainEffectContext = static_cast<const FMainGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return MainEffectContext->IsCriticalHit();
+	}
+	return false;
+}
+
+void UMainAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
+{
+	if (FMainGameplayEffectContext* MainEffectContext = static_cast<FMainGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		MainEffectContext->SetIsBlockedHit(bInIsBlockedHit);
+	}
+}
+
+void UMainAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle,
+	bool bInIsCriticalHit)
+{
+	if (FMainGameplayEffectContext* MainEffectContext = static_cast<FMainGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		MainEffectContext->SetIsCriticalHit(bInIsCriticalHit);
+	}
 }
