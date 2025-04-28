@@ -42,6 +42,19 @@ public:
     FGameplayTag InputTag_4;
 
 	FGameplayTag Damage;
+	FGameplayTag Damage_Physical;
+	FGameplayTag Damage_Fire;
+	FGameplayTag Damage_Cold;
+	FGameplayTag Damage_Lightning;
+	FGameplayTag Damage_Force;
+	
+	FGameplayTag Attributes_Resistance_Physical;
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Cold;
+	FGameplayTag Attributes_Resistance_Lightning;
+	FGameplayTag Attributes_Resistance_Force;
+	
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 
 	FGameplayTag Effects_HitReact;
 protected:
