@@ -9,7 +9,11 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "MainEnemy.generated.h"
 
+
 class UWidgetComponent;
+class UBehaviorTree;
+class AMainAIController;
+
 /**
  * 
  */
@@ -19,6 +23,7 @@ class PROJECT_SOMNIUM_API AMainEnemy : public AMainCharacterBase, public IEnemyI
 	GENERATED_BODY()
 public:
 	AMainEnemy();
+	virtual void PossessedBy(AController* NewController) override;
 
 	/** Enemy Interface */
 	virtual void HighlightActor() override;
@@ -60,6 +65,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AMainAIController> MainAIController;
 
 private:
 	

@@ -12,6 +12,9 @@
 #include "Project_Somnium/Project_Somnium.h"
 #include "UI/Widget/MainUserWidget.h"
 #include "MainGameplayTags.h"
+#include "AI/MainAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AMainEnemy::AMainEnemy()
@@ -29,6 +32,17 @@ AMainEnemy::AMainEnemy()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
+}
+
+void AMainEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (!HasAuthority()) return;
+	MainAIController = Cast<AMainAIController>(NewController);
+
+	MainAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	MainAIController->RunBehaviorTree(BehaviorTree);
 }
 
 void AMainEnemy::HighlightActor()
