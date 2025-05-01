@@ -23,6 +23,11 @@ AMainEnemy::AMainEnemy()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+
 	AttributeSet = CreateDefaultSubobject<UMainAttributeSet>("AttributeSet");
 	
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
@@ -43,6 +48,8 @@ void AMainEnemy::PossessedBy(AController* NewController)
 
 	MainAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	MainAIController->RunBehaviorTree(BehaviorTree);
+	MainAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
+	MainAIController->GetBlackboardComponent()->SetValueAsBool(FName("CanAttackAtRange"), CharacterClass != ECharacterClass::Warrior);
 }
 
 void AMainEnemy::HighlightActor()
@@ -108,6 +115,9 @@ void AMainEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+
+	if (!HasAuthority()) return;
+	MainAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 }
 
 void AMainEnemy::InitAbilityActorInfo()
