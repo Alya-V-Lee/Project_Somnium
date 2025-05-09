@@ -77,7 +77,7 @@ void AMainEnemy::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	if (HasAuthority())
 	{
-			UMainAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+			UMainAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 
 	

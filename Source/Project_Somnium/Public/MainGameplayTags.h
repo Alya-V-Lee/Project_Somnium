@@ -53,6 +53,8 @@ public:
 	FGameplayTag Attributes_Resistance_Cold;
 	FGameplayTag Attributes_Resistance_Lightning;
 	FGameplayTag Attributes_Resistance_Force;
+
+	FGameplayTag Abilities_Attack;
 	
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 

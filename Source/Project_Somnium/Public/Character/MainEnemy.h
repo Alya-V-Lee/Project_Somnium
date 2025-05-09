@@ -33,6 +33,8 @@ public:
 	/** Combat Interface **/
 	virtual int32 GetPlayerLevel() const override {return Level;}
 	virtual void Die() override;
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override {CombatTarget = InCombatTarget;}
+	virtual AActor* GetCombatTarget_Implementation() const override {return CombatTarget;}
 	/** End Combat Interface **/
 
 	UPROPERTY(BlueprintAssignable)
@@ -51,6 +53,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	TObjectPtr<AActor> CombatTarget;
 
 protected:
 	virtual void BeginPlay() override;
