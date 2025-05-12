@@ -56,7 +56,7 @@ void AMainCharacterBase::MulticastHandleDeath_Implementation()
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
-
+	bDead = true;
 }
 
 // Called when the game starts or when spawned
@@ -67,10 +67,20 @@ void AMainCharacterBase::BeginPlay()
 	
 }
 
-FVector AMainCharacterBase::GetCombatSocketLocation()
+FVector AMainCharacterBase::GetCombatSocketLocation_Implementation()
 {
 	check (Weapon);
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
+}
+
+bool AMainCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AMainCharacterBase::GetAvatar_Implementation()
+{
+	return this;
 }
 
 void AMainCharacterBase::InitAbilityActorInfo()
