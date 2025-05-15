@@ -4,6 +4,7 @@
 #include "Character/MainCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "MainGameplayTags.h"
 #include "MovieSceneSequence.h"
 #include "AbilitySystem/MainAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -63,14 +64,35 @@ void AMainCharacterBase::MulticastHandleDeath_Implementation()
 void AMainCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 }
 
-FVector AMainCharacterBase::GetCombatSocketLocation_Implementation()
+FVector AMainCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	check (Weapon);
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	// Get the socket name from the map using the MontageTag
+	const FName* SocketNamePtr = FMainGameplayTags::Get().MontageSocketLocations.Find(MontageTag);
+
+	if (SocketNamePtr)
+	{
+		const FName SocketName = *SocketNamePtr;
+
+		// If the tag is for an equipped weapon and a weapon exists, get the socket location from the weapon
+		if ((MontageTag == FMainGameplayTags::Get().Montage_Attack_MainHand_Equipped || MontageTag == FMainGameplayTags::Get().Montage_Attack_OffHand_Equipped) && Weapon)
+		{
+			return Weapon->GetSocketLocation(SocketName);
+		}
+		else
+		{
+			// Otherwise, get the socket location from the character's mesh
+			return GetMesh()->GetSocketLocation(SocketName);
+		}
+	}
+	else
+	{
+		// If the tag isn't found, log a warning and return the actor's location as a fallback
+		UE_LOG(LogTemp, Warning, TEXT("MontageTag %s not found in MontageSocketLocations map"), *MontageTag.ToString());
+		return FVector();
+	}
 }
 
 bool AMainCharacterBase::IsDead_Implementation() const

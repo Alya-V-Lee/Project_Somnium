@@ -56,7 +56,13 @@ public:
 
 	FGameplayTag Abilities_Attack;
 	
+	FGameplayTag Montage_Attack_MainHand;
+	FGameplayTag Montage_Attack_MainHand_Equipped;
+	FGameplayTag Montage_Attack_OffHand;
+	FGameplayTag Montage_Attack_OffHand_Equipped;
+	
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+	TMap<FGameplayTag, FName> MontageSocketLocations;
 
 	FGameplayTag Effects_HitReact;
 protected:

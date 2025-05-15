@@ -86,4 +86,18 @@ void FMainGameplayTags::InitializeNativeGameplayTags()
 	*/	
 	
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Attack"), FString("Attack ability tag."));
+
+	/*
+	* Montage
+	*/	
+	
+	GameplayTags.Montage_Attack_MainHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.MainHand"), FString("Right Hand"));
+	GameplayTags.Montage_Attack_MainHand_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.MainHand.Equipped"), FString("Right Hand"));
+	GameplayTags.Montage_Attack_OffHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.OffHand"), FString("Left Hand"));
+	GameplayTags.Montage_Attack_OffHand_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.OffHand.Equipped"), FString("Right Hand"));
+	
+	GameplayTags.MontageSocketLocations.Add(GameplayTags.Montage_Attack_MainHand, FName("MainHandSocketName"));
+	GameplayTags.MontageSocketLocations.Add(GameplayTags.Montage_Attack_MainHand_Equipped, FName("WeaponTipSocketName"));
+	GameplayTags.MontageSocketLocations.Add(GameplayTags.Montage_Attack_OffHand, FName("OffHandSocketName"));
+	GameplayTags.MontageSocketLocations.Add(GameplayTags.Montage_Attack_OffHand_Equipped, FName("WeaponTipSocketName"));
 }
