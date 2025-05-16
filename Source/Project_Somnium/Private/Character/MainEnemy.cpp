@@ -49,7 +49,12 @@ void AMainEnemy::PossessedBy(AController* NewController)
 	MainAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	MainAIController->RunBehaviorTree(BehaviorTree);
 	MainAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
-	MainAIController->GetBlackboardComponent()->SetValueAsBool(FName("CanAttackAtRange"), CharacterClass != ECharacterClass::Warrior);
+	if (CharacterClass != ECharacterClass::Warrior)
+	{
+		// TODO: Make ranged qualification based on weapon equipped instead of class
+		MainAIController->GetBlackboardComponent()->SetValueAsBool(FName("CanAttackAtRange"), true);
+	}
+	
 }
 
 void AMainEnemy::HighlightActor()
