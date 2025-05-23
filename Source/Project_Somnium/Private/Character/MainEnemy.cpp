@@ -73,6 +73,10 @@ void AMainEnemy::Die()
 {
 	Super::Die();
 	SetLifeSpan(LifeSpan);
+	if (MainAIController)
+	{
+			MainAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
+	}
 }
 
 void AMainEnemy::BeginPlay()
