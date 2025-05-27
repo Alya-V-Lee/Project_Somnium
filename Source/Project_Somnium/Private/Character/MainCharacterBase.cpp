@@ -70,14 +70,14 @@ void AMainCharacterBase::BeginPlay()
 FVector AMainCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
 	// Get the socket name from the map using the MontageTag
-	const FName* SocketNamePtr = FMainGameplayTags::Get().MontageSocketLocations.Find(MontageTag);
+	const FName* SocketNamePtr = FMainGameplayTags::Get().CombatSockets.Find(MontageTag);
 
 	if (SocketNamePtr)
 	{
 		const FName SocketName = *SocketNamePtr;
 
 		// If the tag is for an equipped weapon and a weapon exists, get the socket location from the weapon
-		if ((MontageTag == FMainGameplayTags::Get().Montage_Attack_MainHand_Equipped || MontageTag == FMainGameplayTags::Get().Montage_Attack_OffHand_Equipped) && Weapon)
+		if ((MontageTag == FMainGameplayTags::Get().CombatSocket_MainHand_Equipped || MontageTag == FMainGameplayTags::Get().CombatSocket_OffHand_Equipped) && Weapon)
 		{
 			return Weapon->GetSocketLocation(SocketName);
 		}
@@ -103,6 +103,18 @@ bool AMainCharacterBase::IsDead_Implementation() const
 AActor* AMainCharacterBase::GetAvatar_Implementation()
 {
 	return this;
+}
+
+FTaggedMontage AMainCharacterBase::GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag)
+{
+	for (FTaggedMontage TaggedMontage : AttackMontages)
+	{
+		if (TaggedMontage.MontageTag == MontageTag)
+		{
+			return TaggedMontage;
+		}
+	}
+	return FTaggedMontage();
 }
 
 void AMainCharacterBase::InitAbilityActorInfo()
