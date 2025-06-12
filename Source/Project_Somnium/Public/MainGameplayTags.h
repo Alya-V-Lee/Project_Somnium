@@ -60,6 +60,7 @@ public:
 	FGameplayTag CombatSocket_MainHand_Equipped;
 	FGameplayTag CombatSocket_OffHand;
 	FGameplayTag CombatSocket_OffHand_Equipped;
+	FGameplayTag CombatSocket_Tail;
 
 	FGameplayTag Montage_Attack_1;
 	FGameplayTag Montage_Attack_2;

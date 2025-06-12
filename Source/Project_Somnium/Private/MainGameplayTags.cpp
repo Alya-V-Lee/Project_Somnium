@@ -95,11 +95,13 @@ void FMainGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.CombatSocket_MainHand_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.MainHand.Equipped"), FString("Right Hand"));
 	GameplayTags.CombatSocket_OffHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.OffHand"), FString("Left Hand"));
 	GameplayTags.CombatSocket_OffHand_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.OffHand.Equipped"), FString("Right Hand"));
+	GameplayTags.CombatSocket_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.Tail"), FString("Tail"));
 	
 	GameplayTags.CombatSockets.Add(GameplayTags.CombatSocket_MainHand, FName("MainHandSocketName"));
 	GameplayTags.CombatSockets.Add(GameplayTags.CombatSocket_MainHand_Equipped, FName("WeaponTipSocketName"));
 	GameplayTags.CombatSockets.Add(GameplayTags.CombatSocket_OffHand, FName("OffHandSocketName"));
 	GameplayTags.CombatSockets.Add(GameplayTags.CombatSocket_OffHand_Equipped, FName("WeaponTipSocketName"));
+	GameplayTags.CombatSockets.Add(GameplayTags.CombatSocket_Tail, FName("TailSocketName"));
 
 	/*
 	* Montages

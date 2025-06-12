@@ -8,6 +8,7 @@
 #include "MovieSceneSequence.h"
 #include "AbilitySystem/MainAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Project_Somnium/Project_Somnium.h"
 
 // Sets default values
@@ -46,6 +47,8 @@ void AMainCharacterBase::Die()
 
 void AMainCharacterBase::MulticastHandleDeath_Implementation()
 {
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
+	
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -69,29 +72,38 @@ void AMainCharacterBase::BeginPlay()
 
 FVector AMainCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	// Get the socket name from the map using the MontageTag
-	const FName* SocketNamePtr = FMainGameplayTags::Get().CombatSockets.Find(MontageTag);
-
-	if (SocketNamePtr)
+	FName SocketName;
+	if (MontageTag == FMainGameplayTags::Get().CombatSocket_MainHand)
 	{
-		const FName SocketName = *SocketNamePtr;
-
-		// If the tag is for an equipped weapon and a weapon exists, get the socket location from the weapon
-		if ((MontageTag == FMainGameplayTags::Get().CombatSocket_MainHand_Equipped || MontageTag == FMainGameplayTags::Get().CombatSocket_OffHand_Equipped) && Weapon)
-		{
-			return Weapon->GetSocketLocation(SocketName);
-		}
-		else
-		{
-			// Otherwise, get the socket location from the character's mesh
-			return GetMesh()->GetSocketLocation(SocketName);
-		}
+		SocketName = MainHandSocketName;  
+	}
+	else if (MontageTag == FMainGameplayTags::Get().CombatSocket_OffHand)
+	{
+		SocketName = OffHandSocketName;   
+	}
+	else if (MontageTag == FMainGameplayTags::Get().CombatSocket_Tail)
+	{
+		SocketName = TailSocketName;
+	}
+	else if (MontageTag == FMainGameplayTags::Get().CombatSocket_MainHand_Equipped || 
+			 MontageTag == FMainGameplayTags::Get().CombatSocket_OffHand_Equipped)
+	{
+		SocketName = WeaponTipSocketName; 
 	}
 	else
 	{
-		// If the tag isn't found, log a warning and return the actor's location as a fallback
-		UE_LOG(LogTemp, Warning, TEXT("MontageTag %s not found in MontageSocketLocations map"), *MontageTag.ToString());
-		return FVector();
+		UE_LOG(LogTemp, Warning, TEXT("Unknown MontageTag: %s"), *MontageTag.ToString());
+		return FVector::ZeroVector;
+	}
+
+	if ((MontageTag == FMainGameplayTags::Get().CombatSocket_MainHand_Equipped || 
+		 MontageTag == FMainGameplayTags::Get().CombatSocket_OffHand_Equipped) && Weapon)
+	{
+		return Weapon->GetSocketLocation(SocketName);
+	}
+	else
+	{
+		return GetMesh()->GetSocketLocation(SocketName);
 	}
 }
 
