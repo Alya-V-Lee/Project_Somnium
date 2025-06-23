@@ -55,6 +55,7 @@ public:
 	FGameplayTag Attributes_Resistance_Force;
 
 	FGameplayTag Abilities_Attack;
+	FGameplayTag Abilities_Summon;
 	
 	FGameplayTag CombatSocket_MainHand;
 	FGameplayTag CombatSocket_MainHand_Equipped;

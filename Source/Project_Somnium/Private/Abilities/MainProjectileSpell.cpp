@@ -17,7 +17,7 @@ void UMainProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 }
 
-void UMainProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag)
+void UMainProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -28,6 +28,11 @@ void UMainProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		);
 
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	if (bOverridePitch)
+	{
+		Rotation.Pitch = PitchOverride;
+	}
+	
 	// Rotation.Pitch = 0.f; Might look better for top-down experience
 	
 	FTransform SpawnTransform;
