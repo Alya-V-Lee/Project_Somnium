@@ -90,6 +90,12 @@ void FMainGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Fire_Firebolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.Firebolt"), FString("Firebolt ability tag."));
 
 	/*
+	* Cooldowns
+	*/
+	
+	GameplayTags.Cooldown_Fire_Firebolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Fire.Firebolt"), FString("Firebolt cooldown tag."));
+	
+	/*
 	* Combat Sockets
 	*/	
 	
