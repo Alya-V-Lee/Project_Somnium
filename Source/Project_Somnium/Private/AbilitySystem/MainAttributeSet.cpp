@@ -12,6 +12,7 @@
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/MainPlayerController.h"
+#include "Project_Somnium/MainLogChannels.h"
 
 UMainAttributeSet::UMainAttributeSet()
 {
@@ -173,6 +174,15 @@ void UMainAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			const bool bBlock = UMainAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
 			const bool bCrit = UMainAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 			ShowFloatingText(Props, LocalIncomingDamage, bBlock, bCrit);
+		}
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+	{
+		const float LocalIncomingXP = GetIncomingXP();
+		SetIncomingXP(LocalIncomingXP);
+		if (LocalIncomingXP > 0.f)
+		{
+			UE_LOG(LogMain, Log, TEXT("Received %f XP"), LocalIncomingXP);
 		}
 	}
 }

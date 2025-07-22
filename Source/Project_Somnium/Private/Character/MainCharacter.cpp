@@ -35,6 +35,8 @@ AMainCharacter::AMainCharacter()
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
+
+	CharacterClass = ECharacterClass::Elementalist;
 }
 
 void AMainCharacter::PossessedBy(AController* NewController)

@@ -24,14 +24,10 @@ void AMainPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMainPlayerState, Level);
+	DOREPLIFETIME(AMainPlayerState, XP)
 }
 
 UAbilitySystemComponent* AMainPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
-}
-
-void AMainPlayerState::OnRep_Level(int32 OldLevel)
-{
-	
 }

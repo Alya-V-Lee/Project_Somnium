@@ -65,6 +65,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	FAbilityInfoSignature AbilityInfoDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category="GAS|XP")
+	FOnAttributeChangedSignature OnXPPercentChangedDelegate;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")
@@ -78,10 +81,11 @@ protected:
 	
 	void OnInitializeStartupAbilities(UMainAbilitySystemComponent* MainAbilitySystemComponent);
 
+	void OnXPChanged(int32 NewXP) const;
+
 private:
 
 		void BindAttributeChange(FGameplayAttribute Attribute, FOnAttributeChangedSignature& AttributeData);
-	
 };
 
 template <typename T>
