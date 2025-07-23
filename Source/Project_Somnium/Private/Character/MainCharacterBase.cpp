@@ -157,6 +157,7 @@ void AMainCharacterBase::AddCharacterAbilities()
 	if (!HasAuthority()) return;
 
 	MainASC->AddCharacterAbilities(StartupAbilities);
+	MainASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 }
 
 void AMainCharacterBase::Dissolve()

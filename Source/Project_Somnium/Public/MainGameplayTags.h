@@ -54,6 +54,8 @@ public:
 	FGameplayTag Attributes_Resistance_Lightning;
 	FGameplayTag Attributes_Resistance_Force;
 
+	FGameplayTag Attributes_Meta_IncomingXP;
+
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 	

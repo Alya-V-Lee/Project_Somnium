@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/MainCharacterBase.h"
+#include "Interaction/PlayerInterface.h"
 #include "MainCharacter.generated.h"
 
 class UCapsuleComponent;
@@ -15,7 +16,7 @@ class UCameraComponent;
  * 
  */
 UCLASS()
-class PROJECT_SOMNIUM_API AMainCharacter : public AMainCharacterBase
+class PROJECT_SOMNIUM_API AMainCharacter : public AMainCharacterBase, public IPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -25,6 +26,10 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
+
+	/** Player Interface */
+	virtual void AddToXP_Implementation(int32 InXP) override;
+	/** End Player Interface */
 
 	/** Combat Interface */
 	virtual int32 GetPlayerLevel() const override;

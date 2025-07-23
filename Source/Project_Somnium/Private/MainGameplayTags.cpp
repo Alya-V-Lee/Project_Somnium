@@ -64,6 +64,12 @@ void FMainGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Resistance_Cold = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Cold"), FString("Resistance to Cold Damage"));
 	GameplayTags.Attributes_Resistance_Lightning = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Lightning"), FString("Resistance to Lightning Damage"));
 	GameplayTags.Attributes_Resistance_Force = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Force"), FString("Resistance to Force Damage"));
+
+	/*
+	* Meta Attributes
+	*/
+
+	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Meta.IncomingXP"), FString("Incoming XP Meta Attribute"));
 	
 	/*
 	* Map of Damage Types to Resistances
