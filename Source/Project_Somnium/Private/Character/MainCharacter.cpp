@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/MainAbilitySystemComponent.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -64,7 +65,68 @@ void AMainCharacter::AddToXP_Implementation(int32 InXP)
 	
 }
 
-int32 AMainCharacter::GetPlayerLevel() const
+void AMainCharacter::LevelUp_Implementation()
+{
+	
+}
+
+int32 AMainCharacter::GetXP_Implementation() const
+{
+	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	return MainPlayerState->GetXP();
+}
+
+int32 AMainCharacter::FindLevelForXP_Implementation(int32 InXP) const
+{
+	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	return MainPlayerState->LevelUpInfo->FindLevelForXP(InXP);
+}
+
+int32 AMainCharacter::GetAttributePointsReward_Implementation(int32 Level) const
+{
+	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	return MainPlayerState->LevelUpInfo->LevelUpInformation[Level].AttributePointReward;
+}
+
+int32 AMainCharacter::GetSpellPointsReward_Implementation(int32 Level) const
+{
+	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	return MainPlayerState->LevelUpInfo->LevelUpInformation[Level].SpellPointReward;
+}
+
+void AMainCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
+{
+	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	return MainPlayerState->AddToLevel(InPlayerLevel);
+}
+
+void AMainCharacter::AddToSpellPoints_Implementation(int32 AddToSpellPoints)
+{
+	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	// TODO: Add AttributePoints to PlayerState
+}
+
+void AMainCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
+{
+	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	// TODO: Add SpellPoints to PlayerState
+}
+
+int32 AMainCharacter::GetPlayerLevel_Implementation() 
 {
 	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
 	check (MainPlayerState);

@@ -30,7 +30,7 @@ public:
 	/** End Enemy Interface */
 
 	/** Combat Interface **/
-	virtual int32 GetPlayerLevel() const override {return Level;}
+	virtual int32 GetPlayerLevel_Implementation() override {return Level;}
 	virtual void Die() override;
 	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override {CombatTarget = InCombatTarget;}
 	virtual AActor* GetCombatTarget_Implementation() const override {return CombatTarget;}
