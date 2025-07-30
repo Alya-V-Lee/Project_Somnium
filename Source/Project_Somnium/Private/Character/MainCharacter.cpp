@@ -4,6 +4,7 @@
 #include "Character/MainCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "NiagaraComponent.h"
 #include "AbilitySystem/MainAbilitySystemComponent.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -15,6 +16,10 @@
 
 AMainCharacter::AMainCharacter()
 {
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->bAutoActivate = false;
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
@@ -26,16 +31,19 @@ AMainCharacter::AMainCharacter()
 	
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("Spring Arm");
 	SpringArm->SetupAttachment(GetRootComponent());
-	SpringArm->SetRelativeRotation(FRotator(-30.0f, 90.0f, 0.0f));
+	SpringArm->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
 	SpringArm->bUsePawnControlRotation = false;
 	SpringArm->TargetArmLength = 700.f;
 	SpringArm->bEnableCameraLag = true;
 	SpringArm->bInheritPitch = false;
 	SpringArm->bInheritYaw = false;
 	SpringArm->bInheritRoll = false;
+	SpringArm->SetUsingAbsoluteRotation(true);
+	SpringArm->bDoCollisionTest = false;
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	Camera->SetupAttachment(SpringArm);
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	Camera->bUsePawnControlRotation = false;
 
 	CharacterClass = ECharacterClass::Elementalist;
 }
@@ -67,7 +75,20 @@ void AMainCharacter::AddToXP_Implementation(int32 InXP)
 
 void AMainCharacter::LevelUp_Implementation()
 {
-	
+	MulticastLevelUpParticles_Implementation();
+}
+
+
+void AMainCharacter::MulticastLevelUpParticles_Implementation() const
+{
+	if (IsValid(LevelUpNiagaraComponent))
+	{
+		const FVector CameraLocation = Camera->GetComponentLocation();
+		const FVector LevelUpNiagaraLocation = LevelUpNiagaraComponent->GetComponentLocation();
+		const FRotator ToCameraRotation = (CameraLocation - LevelUpNiagaraLocation).Rotation();
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 int32 AMainCharacter::GetXP_Implementation() const
@@ -110,21 +131,36 @@ void AMainCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 	return MainPlayerState->AddToLevel(InPlayerLevel);
 }
 
-void AMainCharacter::AddToSpellPoints_Implementation(int32 AddToSpellPoints)
-{
-	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
-	check (MainPlayerState);
-
-	// TODO: Add AttributePoints to PlayerState
-}
-
 void AMainCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
 {
-	const AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
 	check (MainPlayerState);
 
-	// TODO: Add SpellPoints to PlayerState
+	MainPlayerState->AddToAttributePoints(InAttributePoints);
 }
+
+void AMainCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
+{
+	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+
+	MainPlayerState->AddToSpellPoints(InSpellPoints);
+}
+
+int32 AMainCharacter::GetAttributePoints_Implementation() const
+{
+	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+	return MainPlayerState->GetAttributePoints();
+}
+
+int32 AMainCharacter::GetSpellPoints_Implementation() const
+{
+	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
+	check (MainPlayerState);
+	return MainPlayerState->GetSpellPoints();
+}
+
 
 int32 AMainCharacter::GetPlayerLevel_Implementation() 
 {
@@ -155,3 +191,4 @@ void AMainCharacter::InitAbilityActorInfo()
 	}
 	InitializeDefaultAttributes();
 }
+

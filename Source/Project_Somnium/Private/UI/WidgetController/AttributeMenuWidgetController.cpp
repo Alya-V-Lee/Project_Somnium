@@ -5,6 +5,8 @@
 
 #include "AbilitySystem/MainAttributeSet.h"
 #include "MainGameplayTags.h"
+#include "AbilitySystem/MainAbilitySystemComponent.h"
+#include "Player/MainPlayerState.h"
 
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
@@ -22,10 +24,23 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 			}
 		);
 	}
+	AMainPlayerState* MainPlayerState = CastChecked<AMainPlayerState>(PlayerState);
+	MainPlayerState->OnAttributePointsChangedDelegate.AddLambda(
+		[this](int32 Points)
+		{
+			AttributePointsChangedDelegate.Broadcast(Points);
+		}
+	);
+}
+
+void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	UMainAbilitySystemComponent* MainASC = CastChecked<UMainAbilitySystemComponent>(AbilitySystemComponent);
+	MainASC->UpgradeAttribute(AttributeTag);
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag,
-	const FGameplayAttribute& Attribute) const
+                                                            const FGameplayAttribute& Attribute) const
 {
 	FMainAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(AttributeTag);
 	Info.AttributeValue = Attribute.GetNumericValue(AttributeSet);
@@ -43,4 +58,7 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	{
 		BroadcastAttributeInfo(Pair.Key, Pair.Value());
 	}
+
+	AMainPlayerState* MainPlayerState = CastChecked<AMainPlayerState>(PlayerState);
+	AttributePointsChangedDelegate.Broadcast(MainPlayerState->GetAttributePoints());
 }

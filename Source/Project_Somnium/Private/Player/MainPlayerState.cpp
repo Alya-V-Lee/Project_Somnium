@@ -24,7 +24,10 @@ void AMainPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMainPlayerState, Level);
-	DOREPLIFETIME(AMainPlayerState, XP)
+	DOREPLIFETIME(AMainPlayerState, XP);
+	DOREPLIFETIME(AMainPlayerState, AttributePoints);
+	DOREPLIFETIME(AMainPlayerState, SpellPoints);
+	
 }
 
 UAbilitySystemComponent* AMainPlayerState::GetAbilitySystemComponent() const

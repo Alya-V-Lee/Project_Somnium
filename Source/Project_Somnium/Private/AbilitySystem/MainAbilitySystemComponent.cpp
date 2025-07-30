@@ -3,8 +3,10 @@
 
 #include "AbilitySystem/MainAbilitySystemComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "MainGameplayTags.h"
 #include "Abilities/MainGameplayAbility.h"
+#include "Interaction/PlayerInterface.h"
 
 
 void UMainAbilitySystemComponent::AbilityActorInfoSet()
@@ -118,6 +120,31 @@ FGameplayTag UMainAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 		}
 	}
 	return FGameplayTag();
+}
+
+void UMainAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		if (IPlayerInterface::Execute_GetAttributePoints(GetAvatarActor()) > 0)
+		{
+			ServerUpgradeAttribute(AttributeTag);
+		}
+	}
+}
+
+void UMainAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FGameplayTag& AttributeTag)
+{
+	FGameplayEventData Payload;
+	Payload.EventTag = AttributeTag;
+	Payload.EventMagnitude = 1.f;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(), AttributeTag, Payload);
+
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		IPlayerInterface::Execute_AddToAttributePoints(GetAvatarActor(), -1);
+	}
 }
 
 void UMainAbilitySystemComponent::OnRep_ActivateAbilities()
