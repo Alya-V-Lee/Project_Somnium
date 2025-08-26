@@ -12,10 +12,9 @@
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
 	//Super::BindCallbacksToDependencies();
-
-	UMainAttributeSet* AS = CastChecked<UMainAttributeSet>(AttributeSet);
+	
 	check (AttributeInfo)
-	for (auto& Pair : AS->TagsToAttributes)
+	for (auto& Pair : GetMainAS()->TagsToAttributes)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
 	[this, Pair](const FOnAttributeChangeData& Data)
@@ -24,8 +23,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 			}
 		);
 	}
-	AMainPlayerState* MainPlayerState = CastChecked<AMainPlayerState>(PlayerState);
-	MainPlayerState->OnAttributePointsChangedDelegate.AddLambda(
+	GetMainPS()->OnAttributePointsChangedDelegate.AddLambda(
 		[this](int32 Points)
 		{
 			AttributePointsChangedDelegate.Broadcast(Points);
@@ -58,7 +56,6 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	{
 		BroadcastAttributeInfo(Pair.Key, Pair.Value());
 	}
-
-	AMainPlayerState* MainPlayerState = CastChecked<AMainPlayerState>(PlayerState);
-	AttributePointsChangedDelegate.Broadcast(MainPlayerState->GetAttributePoints());
+	
+	AttributePointsChangedDelegate.Broadcast(GetMainPS()->GetAttributePoints());
 }

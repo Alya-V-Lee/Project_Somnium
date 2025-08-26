@@ -7,9 +7,12 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MainAbilitySystemLibrary.generated.h"
 
+class AMainHUD;
+class USpellMenuWidgetController;
 class UAbilitySystemComponent;
 class UAttributeMenuWidgetController;
 class UOverlayWidgetController;
+struct FWidgetControllerParams;
 /**
  * 
  */
@@ -20,11 +23,17 @@ class PROJECT_SOMNIUM_API UMainAbilitySystemLibrary : public UBlueprintFunctionL
 	
 public:
 
-	UFUNCTION(BlueprintPure, Category = "MainAbilitySystemLibrary|WidgetController")
+	UFUNCTION(BlueprintPure, Category = "MainAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static bool MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, AMainHUD*& OutMainHUD);
+
+	UFUNCTION(BlueprintPure, Category = "MainAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
 	static UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintPure, Category = "MainAbilitySystemLibrary|WidgetController")
+	UFUNCTION(BlueprintPure, Category = "MainAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "MainAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static USpellMenuWidgetController* GetSpellMenuWidgetController(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "MainAbilitySystemLibrary|CharacterClassDefaults")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);

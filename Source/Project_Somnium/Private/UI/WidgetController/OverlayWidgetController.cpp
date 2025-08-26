@@ -11,12 +11,11 @@
 void UOverlayWidgetController::BroadcastInitialValues()
 {
 	//Super::BroadcastInitialValues();
-
-	const UMainAttributeSet* MainAttributeSet = CastChecked<UMainAttributeSet>(AttributeSet);
-	OnHealthChanged.Broadcast(MainAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(MainAttributeSet->GetMaxHealth());
-	OnManaChanged.Broadcast(MainAttributeSet->GetMana());
-	OnMaxManaChanged.Broadcast(MainAttributeSet->GetMaxMana());
+	
+	OnHealthChanged.Broadcast(GetMainAS()->GetHealth());
+	OnMaxHealthChanged.Broadcast(GetMainAS()->GetMaxHealth());
+	OnManaChanged.Broadcast(GetMainAS()->GetMana());
+	OnMaxManaChanged.Broadcast(GetMainAS()->GetMaxMana());
 	
 }
 
@@ -34,34 +33,32 @@ void UOverlayWidgetController::BindAttributeChange(FGameplayAttribute Attribute,
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	//Super::BindCallbacksToDependencies();
-	AMainPlayerState* MainPlayerState = CastChecked<AMainPlayerState>(PlayerState);
-	MainPlayerState->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
-	MainPlayerState->OnLevelChangedDelegate.AddLambda(
+	
+	GetMainPS()->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	GetMainPS()->OnLevelChangedDelegate.AddLambda(
 		[this](int32 NewLevel)
 		{
 			OnPlayerLevelChangedDelegate.Broadcast(NewLevel);
 		}
 	);	
 	
-	const UMainAttributeSet* MainAttributeSet = CastChecked<UMainAttributeSet>(AttributeSet);
-	
-	BindAttributeChange(MainAttributeSet->GetHealthAttribute(), OnHealthChanged);
-	BindAttributeChange(MainAttributeSet->GetMaxHealthAttribute(), OnMaxHealthChanged);
-	BindAttributeChange(MainAttributeSet->GetManaAttribute(), OnManaChanged);
-	BindAttributeChange(MainAttributeSet->GetMaxManaAttribute(), OnMaxManaChanged);
+	BindAttributeChange(GetMainAS()->GetHealthAttribute(), OnHealthChanged);
+	BindAttributeChange(GetMainAS()->GetMaxHealthAttribute(), OnMaxHealthChanged);
+	BindAttributeChange(GetMainAS()->GetManaAttribute(), OnManaChanged);
+	BindAttributeChange(GetMainAS()->GetMaxManaAttribute(), OnMaxManaChanged);
 
-	if (UMainAbilitySystemComponent* MainASC = Cast<UMainAbilitySystemComponent>(AbilitySystemComponent))
+	if (GetMainASC())
 	{
-		if (MainASC->bStartupAbilitiesGiven)
+		if (GetMainASC()->bStartupAbilitiesGiven)
 		{
-			OnInitializeStartupAbilities(MainASC);
+			BroadcastAbilityInfo();
 		}
 		else
 		{
-			MainASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
+			GetMainASC()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
 		}
 
-		MainASC->EffectAssetTags.AddLambda(
+		GetMainASC()->EffectAssetTags.AddLambda(
         	[this](const FGameplayTagContainer& AssetTags)
         	{
         		for (const FGameplayTag& Tag : AssetTags)
@@ -78,25 +75,9 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	}
 }
 
-void UOverlayWidgetController::OnInitializeStartupAbilities(UMainAbilitySystemComponent* MainAbilitySystemComponent)
+void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 {
-	if (!MainAbilitySystemComponent->bStartupAbilitiesGiven) return;
-
-	FForEachAbility BroadcastDelegate;
-	BroadcastDelegate.BindLambda([this, MainAbilitySystemComponent](const FGameplayAbilitySpec& AbilitySpec)
-		{
-			FMainAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(MainAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
-			Info.InputTag = MainAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);
-			AbilityInfoDelegate.Broadcast(Info);
-		}
-	);
-	MainAbilitySystemComponent->ForEachAbility(BroadcastDelegate);
-}
-
-void UOverlayWidgetController::OnXPChanged(int32 NewXP) const
-{
-	const AMainPlayerState* MainPlayerState = CastChecked<AMainPlayerState>(PlayerState);
-	const ULevelUpInfo* LevelUpInfo = MainPlayerState->LevelUpInfo;
+	const ULevelUpInfo* LevelUpInfo = GetMainPS()->LevelUpInfo;
 	checkf(LevelUpInfo, TEXT("Unable to find LevelUpInfo, please fill out MainPlayerState Blueprint"));
 
 	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
