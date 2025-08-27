@@ -36,6 +36,7 @@ void UMainWidgetController::BroadcastAbilityInfo()
 		{
 			FMainAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(MainAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
 			Info.InputTag = MainAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);
+			Info.StatusTag = MainAbilitySystemComponent->GetStatusFromSpec(AbilitySpec);
 			AbilityInfoDelegate.Broadcast(Info);
 		}
 	);
