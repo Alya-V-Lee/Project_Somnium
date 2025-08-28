@@ -127,8 +127,12 @@ void AMainCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 {
 	AMainPlayerState* MainPlayerState = GetPlayerState<AMainPlayerState>();
 	check (MainPlayerState);
+	MainPlayerState->AddToLevel(InPlayerLevel);
 
-	return MainPlayerState->AddToLevel(InPlayerLevel);
+	if (UMainAbilitySystemComponent* MainASC = Cast<UMainAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+		MainASC->UpdateAbilityStatuses(MainPlayerState->GetPlayerLevel());
+	}
 }
 
 void AMainCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)

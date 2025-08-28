@@ -129,10 +129,18 @@ int32 UMainAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* Worl
 
 UCharacterClassInfo* UMainAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
-	AMainGameModeBase* MainGameMode = Cast<AMainGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	const AMainGameModeBase* MainGameMode = Cast<AMainGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (MainGameMode == nullptr) return nullptr;
 
 	return MainGameMode->CharacterClassInfo;
+}
+
+UAbilityInfo* UMainAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldContextObject)
+{
+	const AMainGameModeBase* MainGameMode = Cast<AMainGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (MainGameMode == nullptr) return nullptr;
+
+	return MainGameMode->AbilityInfo;
 }
 
 bool UMainAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)

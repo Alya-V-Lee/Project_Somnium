@@ -44,7 +44,7 @@ public:
 	void SetLevel (int32 InLevel) {Level = InLevel; OnLevelChangedDelegate.Broadcast(Level);};
 	void SetXP(int32 InXP) {XP = InXP; OnXPChangedDelegate.Broadcast(XP);};
 	void SetAttributePoints(int32 InAttributePoints) {AttributePoints = InAttributePoints; OnAttributePointsChangedDelegate.Broadcast(AttributePoints);};
-	void SetSpellPoints(int32 InSpellPoints) {SpellPoints = InSpellPoints; OnAttributePointsChangedDelegate.Broadcast(SpellPoints);};
+	void SetSpellPoints(int32 InSpellPoints) {SpellPoints = InSpellPoints; OnSpellPointsChangedDelegate.Broadcast(SpellPoints);};
 	
 	void AddToLevel (int32 InLevel) {Level += InLevel; OnLevelChangedDelegate.Broadcast(Level);};
 	void AddToXP(int32 InXP) {XP += InXP; OnXPChangedDelegate.Broadcast(XP);};
