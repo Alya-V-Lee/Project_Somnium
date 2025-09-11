@@ -80,8 +80,8 @@ private:
 	void OnRep_XP(int32 OldXP) {OnXPChangedDelegate.Broadcast(XP);};
 
 	UFUNCTION()
-	void OnRep_AttributePoints(int32 OldAttributePoints) {OnXPChangedDelegate.Broadcast(XP);};
+	void OnRep_AttributePoints(int32 OldAttributePoints) {OnAttributePointsChangedDelegate.Broadcast(AttributePoints);};
 
 	UFUNCTION()
-	void OnRep_SpellPoints(int32 OldSpellPoints) {OnXPChangedDelegate.Broadcast(XP);};
+	void OnRep_SpellPoints(int32 OldSpellPoints) {OnSpellPointsChangedDelegate.Broadcast(SpellPoints);};
 };

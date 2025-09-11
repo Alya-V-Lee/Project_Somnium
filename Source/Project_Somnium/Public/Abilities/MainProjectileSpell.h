@@ -27,4 +27,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AMainProjectile> ProjectileClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	int32 NumProjectiles = 5;
+
 };

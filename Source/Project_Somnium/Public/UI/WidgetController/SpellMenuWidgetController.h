@@ -9,8 +9,9 @@
 #include "SpellMenuWidgetController.generated.h"
 
 struct FMainGameplayTags;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSpellGlobeSelectedSignature,
-                                             bool, bSpendPointsButtonEnabled, bool, bEquipButtonEnabled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FSpellGlobeSelectedSignature,
+bool, bSpendPointsButtonEnabled, bool, bEquipButtonEnabled,
+FString, DescriptionString, FString, NextLevelDescriptionString);
 
 struct FSelectedAbility
 {
@@ -39,6 +40,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="GAS|Attributes")
 	void SpellGlobeSelected(const FGameplayTag& AbilityTag);
+	
+	UFUNCTION(BlueprintCallable, Category="GAS|Attributes")
+	void SpendPointButtonPressed();
 
 private:
 	
