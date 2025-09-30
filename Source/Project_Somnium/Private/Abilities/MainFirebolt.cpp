@@ -3,11 +3,9 @@
 
 #include "Abilities/MainFirebolt.h"
 
-#include "MainGameplayTags.h"
-
 FString UMainFirebolt::GetDescription(int32 Level)
 {
-	const int32 Damage = GetDamageByDamageType(Level, FMainGameplayTags::Get().Damage_Fire);
+	const int32 ScaledDamage = Damage.GetValueAtLevel(Level);
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	const float Cooldown = GetCooldown(Level);
 	if (Level == 1)
@@ -26,7 +24,7 @@ FString UMainFirebolt::GetDescription(int32 Level)
 			"</><Damage>%d</><Default> fire damage with a chance to burn.</>"),
 			
 			// Values
-			Level, ManaCost, Cooldown, Damage);
+			Level, ManaCost, Cooldown, ScaledDamage);
 	}
 	else
 	{
@@ -44,13 +42,13 @@ FString UMainFirebolt::GetDescription(int32 Level)
 			"</><Damage>%d</><Default> fire damage with a chance to burn.</>"),
 			
 			// Values
-			Level, ManaCost, Cooldown, FMath::Min(Level, NumProjectiles), Damage);
+			Level, ManaCost, Cooldown, FMath::Min(Level, NumProjectiles), ScaledDamage);
 	}
 }
 
 FString UMainFirebolt::GetNextLevelDescription(int32 Level)
 {
-	const int32 Damage = GetDamageByDamageType(Level, FMainGameplayTags::Get().Damage_Fire);
+	const int32 ScaledDamage = Damage.GetValueAtLevel(Level);
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	const float Cooldown = GetCooldown(Level);
 	return FString::Printf(TEXT(
@@ -67,6 +65,6 @@ FString UMainFirebolt::GetNextLevelDescription(int32 Level)
 		"</><Damage>%d</><Default> fire damage with a chance to burn.</>"),
 		
 		// Values
-		Level, ManaCost, Cooldown, FMath::Min(Level, NumProjectiles), Damage);
+		Level, ManaCost, Cooldown, FMath::Min(Level, NumProjectiles), ScaledDamage);
 }
 

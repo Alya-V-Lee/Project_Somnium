@@ -56,6 +56,16 @@ public:
 	FGameplayTag Attributes_Resistance_Lightning;
 	FGameplayTag Attributes_Resistance_Force;
 
+	FGameplayTag Debuff_Physical;
+	FGameplayTag Debuff_Burn;
+	FGameplayTag Debuff_Stun;
+	FGameplayTag Debuff_Force;
+
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Frequency;
+	FGameplayTag Debuff_Duration;
+
 	FGameplayTag Attributes_Meta_IncomingXP;
 
 	FGameplayTag Abilities_None;
@@ -89,6 +99,7 @@ public:
 	FGameplayTag Montage_Attack_4;
 	
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
 	TMap<FGameplayTag, FName> CombatSockets;
 
 	FGameplayTag Effects_HitReact;

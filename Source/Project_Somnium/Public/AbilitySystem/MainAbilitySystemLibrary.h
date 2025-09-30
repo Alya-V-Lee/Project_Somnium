@@ -65,6 +65,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "MainAbilitySystemLibrary|GameplayMechanics")
 	static bool IsFriendly(AActor* FirstActor, AActor* SecondActor);
+
+	UFUNCTION(BlueprintCallable, Category = "MainAbilitySystemLibrary|DamageEffect")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 	
 	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);
 };
