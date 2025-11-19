@@ -11,6 +11,7 @@
 #include "MainGameplayTags.h"
 #include "VREditorMode.h"
 #include "AbilitySystem/MainAbilitySystemLibrary.h"
+#include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
 #include "Interaction/CombatInterface.h"
 #include "Interaction/PlayerInterface.h"
 #include "Player/MainPlayerController.h"
@@ -182,7 +183,16 @@ void UMainAttributeSet::HandleIncomingDamage(const FEffectProperties Props)
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
 			if (CombatInterface)
 			{
-				CombatInterface->Die();
+				if (UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent())
+				{
+					for (TTuple<FGameplayTag, FGameplayTag> Pair : FMainGameplayTags::Get().DamageTypesToDebuffs)
+					{
+						const FGameplayTag& DamageType = Pair.Key;
+						const FGameplayTag& DebuffType = Pair.Value;
+						ASC->RemoveActiveEffectsWithGrantedTags(FGameplayTagContainer({Pair.Value}));
+					}
+				}
+				CombatInterface->Die(UMainAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 			}
 			SendXPEvent(Props);
 		}
@@ -226,7 +236,11 @@ void UMainAttributeSet::Debuff(const FEffectProperties& Props)
 	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
 
 	// Grant Debuff tag based on damage type
-	Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	FInheritedTagContainer TagContainer = FInheritedTagContainer();
+	UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
+	TagContainer.Added.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	TagContainer.CombinedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	Component.SetAndApplyTargetTagChanges(TagContainer);
 
 	// Configure stacking behavior
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;

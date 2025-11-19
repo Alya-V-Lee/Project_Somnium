@@ -69,9 +69,9 @@ void AMainEnemy::UnHighlightActor()
 	Weapon->SetRenderCustomDepth(false);
 }
 
-void AMainEnemy::Die()
+void AMainEnemy::Die(const FVector& DeathImpulse)
 {
-	Super::Die();
+	Super::Die(DeathImpulse);
 	SetLifeSpan(LifeSpan);
 	if (MainAIController)
 	{
@@ -141,6 +141,7 @@ void AMainEnemy::InitAbilityActorInfo()
 	{
 		InitializeDefaultAttributes();
 	}
+	OnASCRegistered.Broadcast(AbilitySystemComponent);
 }
 
 void AMainEnemy::InitializeDefaultAttributes() const
